@@ -15,15 +15,29 @@
   <meta name="description" content="Kush Patel is the founder of Search1AI, building AI-powered search tools. Read about his work, projects, and writing.">
   <link rel="canonical" href="https://kushpatel.ai/">
 
+  <!-- Explicitly opt in to the richest result Google will show.
+       max-image-preview:large is what allows a full-size image in
+       search results and Google Discover; the -1 values remove
+       Google's default caps on snippet length. -->
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
+
   <!-- Preview cards for LinkedIn, X, iMessage, Slack -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://kushpatel.ai/">
+  <meta property="og:site_name" content="Kush Patel">
+  <meta property="og:locale" content="en_US">
   <meta property="og:title" content="Kush Patel — Founder of Search1AI">
   <meta property="og:description" content="Kush Patel is the founder of Search1AI, building AI-powered search tools.">
-  <meta property="og:image" content="https://kushpatel.ai/assets/og-image.png">
   <meta name="twitter:card" content="summary_large_image">
+  <!-- TODO(image): og:image needs a real 1200x630 PNG at
+       /assets/og-image.png. Left out deliberately — a broken image URL
+       gets cached as broken by LinkedIn and X, which is worse than
+       having none. Add this line back once the file exists:
+       <meta property="og:image" content="https://kushpatel.ai/assets/og-image.png"> -->
 
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0e1113" media="(prefers-color-scheme: dark)">
   <link rel="stylesheet" href="/styles.css">
 
   <!-- ============================================================
@@ -36,24 +50,51 @@
        the other people who share your name.
 
        Keep the sameAs list identical to the footer links below.
+
+       TODO(image): add "image": "https://kushpatel.ai/assets/kush-patel.jpg"
+       to the Person block once a headshot exists. Omitted for now
+       rather than pointing at a 404.
        ============================================================ -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "Person",
-    "name": "Kush Patel",
-    "url": "https://kushpatel.ai/",
-    "image": "https://kushpatel.ai/assets/kush-patel.jpg",
-    "email": "kush@search1ai.com",
-    "jobTitle": "Founder",
-    "worksFor": {
-      "@type": "Organization",
-      "name": "Search1AI",
-      "url": "https://search1ai.com"
-    },
-    "description": "Founder of Search1AI, building AI-powered search tools.",
-    "sameAs": [
-      "https://github.com/kushhpatel1"
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://kushpatel.ai/#kush",
+        "name": "Kush Patel",
+        "url": "https://kushpatel.ai/",
+        "email": "kush@search1ai.com",
+        "jobTitle": "Founder",
+        "worksFor": { "@id": "https://kushpatel.ai/#search1ai" },
+        "description": "Founder of Search1AI, building AI-powered search tools.",
+        "sameAs": [
+          "https://github.com/kushhpatel1"
+        ]
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://kushpatel.ai/#search1ai",
+        "name": "Search1AI",
+        "url": "https://search1ai.com",
+        "founder": { "@id": "https://kushpatel.ai/#kush" }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://kushpatel.ai/#website",
+        "url": "https://kushpatel.ai/",
+        "name": "Kush Patel",
+        "inLanguage": "en-US",
+        "publisher": { "@id": "https://kushpatel.ai/#kush" }
+      },
+      {
+        "@type": "WebPage",
+        "@id": "https://kushpatel.ai/#webpage",
+        "url": "https://kushpatel.ai/",
+        "name": "Kush Patel — Founder of Search1AI",
+        "isPartOf": { "@id": "https://kushpatel.ai/#website" },
+        "about": { "@id": "https://kushpatel.ai/#kush" }
+      }
     ]
   }
   </script>

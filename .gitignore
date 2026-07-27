@@ -1,0 +1,15 @@
+# macOS
+.DS_Store
+._*
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Vercel CLI
+.vercel
+
+# Environment / secrets — never commit these
+.env
+.env.*

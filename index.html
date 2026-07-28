@@ -29,6 +29,11 @@
   <meta name="theme-color" content="#12100d" media="(prefers-color-scheme: dark)">
   <link rel="stylesheet" href="/styles.css">
 
+  <!-- Marks the document as scripted before first paint, so the CSS can
+       safely hide the tagline for its entrance animation. Without this
+       flag the line would stay invisible for anyone with JS disabled. -->
+  <script>document.documentElement.classList.add('js');</script>
+
   <!-- ============================================================
        STRUCTURED DATA (JSON-LD)
        The page is now visually name-only, so this is the only
@@ -90,16 +95,23 @@
          is a progressive enhancement layered on top. With JS disabled
          the name simply appears, fully styled. -->
     <h1 class="name" aria-label="Kush Patel">Kush Patel</h1>
+    <p class="star">Build beautiful things<span class="nb"> — physical &amp; digital — </span>that change the world.</p>
   </main>
 
   <script>
     (function () {
       var el = document.querySelector('.name');
+      var star = document.querySelector('.star');
       if (!el) return;
 
-      // Respect the OS "reduce motion" setting — show the name at once.
+      function revealStar() {
+        if (star) star.classList.add('is-in');
+      }
+
+      // Respect the OS "reduce motion" setting — show everything at once.
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         el.classList.add('is-done');
+        revealStar();
         return;
       }
 
@@ -146,10 +158,15 @@
         }, START + i * STEP);
       });
 
+      var typedFor = START + chars.length * STEP;
+
       // Once the last letter lands, let the caret settle into a slow blink.
       setTimeout(function () {
         el.classList.add('is-done');
-      }, START + chars.length * STEP);
+      }, typedFor);
+
+      // A beat of silence after the name, then the line arrives.
+      setTimeout(revealStar, typedFor + 350);
     })();
   </script>
 </body>

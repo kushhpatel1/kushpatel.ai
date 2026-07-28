@@ -179,9 +179,27 @@ body::before {
 
 /* --- Email ----------------------------------------------------------- */
 .contact {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.85rem;
   font-size: 0.875rem;
   letter-spacing: 0.012em;
   color: var(--ink-soft);
+}
+
+/* The icon is optically heavier than the text beside it, so it sits a
+   little lighter until hovered. */
+.contact .icon {
+  display: inline-flex;
+  padding-bottom: 0;
+  border-bottom: 0;
+  opacity: 0.78;
+  transition: color 300ms ease, opacity 300ms ease;
+}
+.contact .icon:hover {
+  opacity: 1;
+  border-bottom: 0;
 }
 
 .contact a {

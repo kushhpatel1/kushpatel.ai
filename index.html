@@ -4,21 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <!-- ============================================================
-       SEO CORE — these tags do most of the work.
-       Title: ~55 characters, your name first. This is the blue
-       link people click in Google results.
-       Description: ~155 characters. Google sometimes rewrites it,
-       but a good one improves click-through when it is used.
-       ============================================================ -->
   <title>Kush Patel — Founder of Search1AI</title>
-  <meta name="description" content="Kush Patel is the founder of Search1AI, building AI-powered search tools. Read about his work, projects, and writing.">
+  <meta name="description" content="Kush Patel is the founder of Search1AI, building AI-powered search tools.">
   <link rel="canonical" href="https://kushpatel.ai/">
 
-  <!-- Explicitly opt in to the richest result Google will show.
-       max-image-preview:large is what allows a full-size image in
-       search results and Google Discover; the -1 values remove
-       Google's default caps on snippet length. -->
   <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1">
 
   <!-- Preview cards for LinkedIn, X, iMessage, Slack -->
@@ -36,24 +25,18 @@
        <meta property="og:image" content="https://kushpatel.ai/assets/og-image.png"> -->
 
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#0e1113" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f2eee5" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#12100d" media="(prefers-color-scheme: dark)">
   <link rel="stylesheet" href="/styles.css">
 
   <!-- ============================================================
        STRUCTURED DATA (JSON-LD)
-       The highest-leverage SEO item on a personal site.
-       It tells Google "this page IS a person named Kush Patel,
-       and here is everywhere else that person exists online."
-       That cross-linking is how Google grows confident all your
-       profiles are one entity — which is what lets you outrank
-       the other people who share your name.
-
-       Keep the sameAs list identical to the footer links below.
+       The page is now visually name-only, so this is the only
+       machine-readable description of who you are. Keeping it is
+       what stops the site from being a semantically empty page.
 
        TODO(image): add "image": "https://kushpatel.ai/assets/kush-patel.jpg"
-       to the Person block once a headshot exists. Omitted for now
-       rather than pointing at a 404.
+       to the Person block once a headshot exists.
        ============================================================ -->
   <script type="application/ld+json">
   {
@@ -101,81 +84,73 @@
 </head>
 
 <body>
-  <!-- Accessibility: lets keyboard users jump straight past the nav -->
-  <a class="skip-link" href="#main">Skip to content</a>
-
-  <header class="site-header">
-    <nav aria-label="Main">
-      <a class="wordmark" href="/">Kush Patel</a>
-      <ul>
-        <li><a href="#about">About</a></li>
-        <li><a href="#work">Work</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
-  </header>
-
-  <main id="main">
-
-    <!-- Exactly ONE <h1> per page, and it should contain your name. -->
-    <section class="hero">
-      <h1>Kush Patel</h1>
-      <p class="tagline">
-        Founder of <a href="https://search1ai.com">Search1AI</a>.
-        <!-- TODO: one real sentence about what you do.
-             Write it the way you would say it out loud. -->
-        I build AI-powered search tools.
-      </p>
-    </section>
-
-    <section id="about">
-      <h2>About</h2>
-      <!-- TODO: two to four short paragraphs. This is your most
-           important content for SEO — Google needs real text to
-           understand who you are. Aim for 150+ words of genuine
-           substance. Cover: what you build, what you care about,
-           where you are based, what you did before. -->
-      <p>
-        Write two or three paragraphs here about who you are and what you
-        work on. Be specific — specifics are what make a page findable, and
-        what make a reader stay.
-      </p>
-      <p>
-        Mention the things you want to be found for: the problems you work
-        on, the tools you use, the industry you are in.
-      </p>
-    </section>
-
-    <section id="work">
-      <h2>Work</h2>
-      <ul class="work-list">
-        <li>
-          <h3><a href="https://search1ai.com">Search1AI</a></h3>
-          <p>One or two lines on what it is and what you built.</p>
-        </li>
-        <li>
-          <h3>Project name</h3>
-          <p>One or two lines on what it is and what you built.</p>
-        </li>
-      </ul>
-    </section>
-
-    <section id="contact">
-      <h2>Contact</h2>
-      <p><a href="mailto:kush@search1ai.com">kush@search1ai.com</a></p>
-      <ul class="links">
-        <!-- rel="me" is a small signal that these profiles are the
-             same person as this site. Keep in sync with sameAs above. -->
-        <li><a rel="me" href="https://github.com/kushhpatel1">GitHub</a></li>
-        <!-- TODO: add LinkedIn and X once you have the URLs, and add
-             the same URLs to the sameAs array in the JSON-LD. -->
-      </ul>
-    </section>
-
+  <main>
+    <!-- The name is real text in the HTML, not injected by JavaScript.
+         Crawlers and screen readers get it immediately; the animation
+         is a progressive enhancement layered on top. With JS disabled
+         the name simply appears, fully styled. -->
+    <h1 class="name" aria-label="Kush Patel">Kush Patel</h1>
   </main>
 
-  <footer class="site-footer">
-    <p>&copy; 2026 Kush Patel</p>
-  </footer>
+  <script>
+    (function () {
+      var el = document.querySelector('.name');
+      if (!el) return;
+
+      // Respect the OS "reduce motion" setting — show the name at once.
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        el.classList.add('is-done');
+        return;
+      }
+
+      var text = el.textContent.trim();
+
+      // Rebuild the name one <span> per character so each can fade in
+      // independently. aria-hidden because the <h1> already carries an
+      // aria-label — without it, screen readers spell the name out.
+      el.textContent = '';
+      el.setAttribute('aria-hidden', 'true');
+
+      var frag = document.createDocumentFragment();
+      var chars = [];
+      for (var i = 0; i < text.length; i++) {
+        var span = document.createElement('span');
+        span.className = 'char';
+        span.textContent = text[i];
+        frag.appendChild(span);
+        chars.push(span);
+      }
+      el.appendChild(frag);
+
+      var caret = document.createElement('span');
+      caret.className = 'caret';
+      caret.setAttribute('aria-hidden', 'true');
+      el.insertBefore(caret, chars[0]);
+
+      var STEP = 145;   // ms between letters
+      var START = 450;  // ms before the first letter
+
+      // Unrevealed letters still occupy their space (they are only
+      // transparent), so the line never reflows. Walking the caret
+      // along keeps it at the writing position instead of parked at
+      // the end of the full name.
+      chars.forEach(function (span, i) {
+        setTimeout(function () {
+          span.classList.add('is-visible');
+          var next = chars[i + 1];
+          if (next) {
+            el.insertBefore(caret, next);
+          } else {
+            el.appendChild(caret);
+          }
+        }, START + i * STEP);
+      });
+
+      // Once the last letter lands, let the caret settle into a slow blink.
+      setTimeout(function () {
+        el.classList.add('is-done');
+      }, START + chars.length * STEP);
+    })();
+  </script>
 </body>
 </html>

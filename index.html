@@ -52,7 +52,7 @@
         "@id": "https://kushpatel.ai/#kush",
         "name": "Kush Patel",
         "url": "https://kushpatel.ai/",
-        "email": "kush@search1ai.com",
+        "email": "patel.kush1@outlook.com",
         "jobTitle": "Founder",
         "worksFor": { "@id": "https://kushpatel.ai/#search1ai" },
         "description": "Founder of Search1AI, building AI-powered search tools.",
@@ -65,6 +65,7 @@
         "@id": "https://kushpatel.ai/#search1ai",
         "name": "Search1AI",
         "url": "https://search1ai.com",
+        "email": "kush@search1ai.com",
         "founder": { "@id": "https://kushpatel.ai/#kush" }
       },
       {
@@ -95,23 +96,32 @@
          is a progressive enhancement layered on top. With JS disabled
          the name simply appears, fully styled. -->
     <h1 class="name" aria-label="Kush Patel">Kush Patel</h1>
-    <p class="star">Build beautiful things<span class="nb"> — physical &amp; digital — </span>that change the world.</p>
+    <p class="star">Build beautiful things <span class="nb">physical &amp; digital</span> that change the world.</p>
   </main>
+
+  <footer class="contact">
+    <a href="mailto:patel.kush1@outlook.com">patel.kush1@outlook.com</a>
+  </footer>
 
   <script>
     (function () {
       var el = document.querySelector('.name');
       var star = document.querySelector('.star');
+      var contact = document.querySelector('.contact');
       if (!el) return;
 
       function revealStar() {
         if (star) star.classList.add('is-in');
+      }
+      function revealContact() {
+        if (contact) contact.classList.add('is-in');
       }
 
       // Respect the OS "reduce motion" setting — show everything at once.
       if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
         el.classList.add('is-done');
         revealStar();
+        revealContact();
         return;
       }
 
@@ -165,8 +175,10 @@
         el.classList.add('is-done');
       }, typedFor);
 
-      // A beat of silence after the name, then the line arrives.
+      // A beat of silence after the name, then the line arrives,
+      // and the email last so the eye reaches it in order.
       setTimeout(revealStar, typedFor + 350);
+      setTimeout(revealContact, typedFor + 1000);
     })();
   </script>
 </body>

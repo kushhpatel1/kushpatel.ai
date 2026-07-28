@@ -127,14 +127,33 @@ body::before {
 /* --- North star ------------------------------------------------------ */
 .star {
   /* Inherits main's 40rem ceiling — wide enough for the whole thought
-     on one line at desktop size, folding to two or three on a phone. */
+     on one line at desktop size, folding to two on a phone. */
   max-width: 100%;
-  margin: clamp(1.4rem, 3.4vw, 2.1rem) auto 0;
+  margin: clamp(1.5rem, 3.6vw, 2.25rem) auto 0;
   text-align: center;
-  font-size: clamp(0.9375rem, 2.4vw, 1.125rem);
-  line-height: 1.65;
-  letter-spacing: 0.005em;
   color: var(--ink-soft);
+}
+
+/* The eyebrow. Small and widely tracked so it reads as a caption
+   rather than competing with the statement under it. */
+.star-label {
+  display: block;
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  text-indent: 0.22em;      /* re-centres against the trailing track */
+  opacity: 0.62;
+  margin-bottom: 0.7rem;
+}
+
+/* Caps need looser tracking than lowercase to stay legible. */
+.star-text {
+  display: block;
+  font-size: clamp(0.8125rem, 2.1vw, 0.9375rem);
+  text-transform: uppercase;
+  letter-spacing: 0.11em;
+  text-indent: 0.11em;
+  line-height: 1.85;
   text-wrap: balance;   /* keeps the two lines evenly weighted */
 }
 

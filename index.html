@@ -96,7 +96,13 @@
          is a progressive enhancement layered on top. With JS disabled
          the name simply appears, fully styled. -->
     <h1 class="name" aria-label="Kush Patel">Kush Patel</h1>
-    <p class="star">Build beautiful things <span class="nb">physical &amp; digital</span> that change the world.</p>
+    <!-- Set in sentence case and uppercased in CSS. Typing literal caps
+         makes some screen readers spell words out as acronyms, and it
+         would leave the sitewide text shouting in search snippets. -->
+    <p class="star">
+      <span class="star-label">My north star</span>
+      <span class="star-text">Build beautiful things <span class="nb">physical &amp; digital</span> that change the world</span>
+    </p>
   </main>
 
   <footer class="contact">

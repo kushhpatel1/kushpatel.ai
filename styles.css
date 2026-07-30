@@ -1,111 +1,180 @@
 /* ============================================================
    Kush Patel — kushpatel.ai
    One stylesheet, no framework, no build step, no webfonts.
-   The paper grain is a procedural SVG filter inlined as a data
-   URI, so the texture costs zero network requests and stays
-   crisp at any resolution.
+
+   Layout language: a centred sheet bounded by hairline rules with
+   crop marks at its corners, fine paper grain over a flat ground,
+   an off-centre bloom, monospace UI type, and zero corner radius.
+
+   Light is the paper reading; dark inverts to near-black.
    ============================================================ */
 
 /* --- Design tokens -------------------------------------------------- */
 :root {
-  --paper-hi:  #f7f3ea;   /* lit edge of the sheet */
-  --paper-lo:  #e9e2d3;   /* shaded corners        */
-  --ink:       #1b1814;
-  --ink-soft:  #6a6053;   /* the quieter voice     */
-  --caret:     #b0442b;   /* red pencil            */
+  --bg:        #f2f1ed;   /* paper stock            */
+  --fg:        #17171a;   /* ink                    */
+  --muted:     #6e6e73;   /* secondary voice        */
+  --rule:      #d6d5cf;   /* hairline               */
+  --tick:      rgba(23, 23, 26, 0.4);
 
-  --grain-opacity: 0.42;
+  --grain-opacity: 0.38;
   --grain-blend:   multiply;
-  --vignette:      rgba(90, 74, 48, 0.16);
+
+  /* On paper the bloom has to read as light falling on a sheet, not as a
+     lamp behind it — so it stays faint and is paired with a corner
+     vignette. Without the vignette a white glow on off-white just
+     washes the texture out. */
+  --bloom: rgba(255, 255, 255, 0.5);
+  --bloom-mid: rgba(255, 255, 255, 0.14);
+  --vignette: rgba(122, 112, 88, 0.14);
+
+  --sheet:  1240px;
+  --gutter: clamp(1.25rem, 4vw, 2.5rem);
+
+  --mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Monaco,
+          Consolas, "Liberation Mono", monospace;
+  --sans: "Helvetica Neue", Helvetica, -apple-system,
+          BlinkMacSystemFont, Arial, system-ui, sans-serif;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper-hi:  #1a1713;
-    --paper-lo:  #100e0b;
-    --ink:       #ece5d8;
-    --ink-soft:  #9b9080;
-    --caret:     #d4674a;
+    --bg:        #16161b;
+    --fg:        #f4f4f5;
+    --muted:     #a1a1aa;
+    --rule:      #2c2c34;
+    --tick:      rgba(244, 244, 245, 0.35);
 
     --grain-opacity: 0.30;
     --grain-blend:   overlay;
-    --vignette:      rgba(0, 0, 0, 0.45);
+
+    --bloom: rgba(232, 232, 236, 0.30);
+    --bloom-mid: rgba(161, 161, 170, 0.09);
+    --vignette: rgba(0, 0, 0, 0.34);
   }
 }
 
 *, *::before, *::after { box-sizing: border-box; }
 
-/* --- The sheet ------------------------------------------------------- */
+/* --- Ground ---------------------------------------------------------- */
 html { height: 100%; }
 
 body {
   margin: 0;
   min-height: 100svh;
-  display: grid;
-  /* An implicit auto track sizes to max-content and will happily grow
-     past the viewport. minmax(0, 1fr) pins it to the available width
-     so the tagline wraps instead of overflowing on phones. */
-  grid-template-columns: minmax(0, 1fr);
-  /* Name block takes the free space and centres in it; the email sits
-     in an auto row pinned to the foot of the sheet. */
-  grid-template-rows: 1fr auto;
-  place-items: center;
-  padding: 1.5rem;
-
-  /* Two layers: a soft corner vignette over a warm paper gradient.
-     Together they read as a lit sheet rather than a flat fill. */
-  background:
-    radial-gradient(120% 90% at 50% 40%, transparent 42%, var(--vignette) 100%),
-    linear-gradient(160deg, var(--paper-hi) 0%, var(--paper-lo) 100%);
-  background-attachment: fixed;
-
-  color: var(--ink);
-  font-family: "Iowan Old Style", "Palatino Linotype", Palatino,
-               "Book Antiqua", Georgia, ui-serif, serif;
+  background-color: var(--bg);
+  color: var(--fg);
+  font-family: var(--mono);
+  font-size: 0.875rem;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
 }
 
-/* A centred grid item sizes to its content, which would let the wide
-   tagline push past a narrow viewport. Constraining the column here
-   keeps everything inside the screen on phones. */
-main {
-  width: 100%;
-  max-width: 40rem;
-  margin-inline: auto;
-  text-align: center;
-}
-
-/* Fibrous grain. fractalNoise at a high base frequency gives the
-   irregular fibre speckle of uncoated stock; desaturating it keeps
-   the paper's warmth coming from the gradient underneath. */
+/* Fine, tight speckle — closer to the tooth of uncoated stock than to
+   visible noise. Kept procedural so it costs no network request. */
 body::before {
   content: "";
   position: fixed;
-  inset: -50%;              /* overscan so the texture never clips */
+  inset: 0;
+  z-index: 0;
   pointer-events: none;
   opacity: var(--grain-opacity);
   mix-blend-mode: var(--grain-blend);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  background-size: 300px 300px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
 }
 
-/* --- The name -------------------------------------------------------- */
+/* The bloom sits behind everything, off-centre to the upper right. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse 72% 68% at 74% 30%,
+      var(--bloom) 0%,
+      var(--bloom-mid) 34%,
+      transparent 72%
+    ),
+    radial-gradient(125% 105% at 50% 45%, transparent 44%, var(--vignette) 100%);
+}
+
+/* --- The sheet ------------------------------------------------------- */
+.sheet {
+  position: relative;
+  z-index: 1;
+  max-width: var(--sheet);
+  min-height: 100svh;
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Side rules and crop marks only once there is room for them to read as
+   a deliberate frame rather than as clutter against the screen edge. */
+@media (min-width: 768px) {
+  .sheet {
+    border-inline: 1px solid var(--rule);
+  }
+
+  .tick {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    z-index: 5;
+    pointer-events: none;
+  }
+  .tick-tl { top: 0; left: 0;  border-top: 1px solid var(--tick); border-left: 1px solid var(--tick); }
+  .tick-tr { top: 0; right: 0; border-top: 1px solid var(--tick); border-right: 1px solid var(--tick); }
+  .tick-bl { bottom: 0; left: 0;  border-bottom: 1px solid var(--tick); border-left: 1px solid var(--tick); }
+  .tick-br { bottom: 0; right: 0; border-bottom: 1px solid var(--tick); border-right: 1px solid var(--tick); }
+}
+
+/* --- Masthead -------------------------------------------------------- */
+.masthead {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  height: clamp(4rem, 9vw, 6rem);
+  padding-inline: var(--gutter);
+}
+
+.masthead .domain {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--muted);
+  opacity: 0.8;
+  text-decoration: none;
+  transition: color 260ms ease, opacity 260ms ease;
+}
+a.masthead .domain:hover,
+.masthead a.domain:hover { color: var(--fg); opacity: 1; }
+.masthead a.domain:focus-visible { outline: 1px solid var(--fg); outline-offset: 4px; }
+
+/* --- Hero ------------------------------------------------------------ */
+.hero {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: var(--gutter);
+  text-align: center;
+}
+
 .name {
   margin: 0;
-  font-size: clamp(2.5rem, 11vw, 6rem);
+  font-family: var(--sans);
+  font-size: clamp(2.25rem, 8vw, 4.75rem);
   font-weight: 400;
-  line-height: 1.1;
-  letter-spacing: -0.015em;
+  line-height: 1.08;
+  letter-spacing: -0.028em;
   white-space: pre;         /* preserves the space between names */
-  text-align: center;
-
-  /* A whisper of relief, as if the letters sit in the fibre. */
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.35);
-}
-
-@media (prefers-color-scheme: dark) {
-  .name { text-shadow: 0 1px 0 rgba(0, 0, 0, 0.5); }
 }
 
 /* Each letter starts lifted and blurred, then settles into place —
@@ -115,7 +184,7 @@ body::before {
   white-space: pre;
   opacity: 0;
   filter: blur(6px);
-  transform: translateY(0.14em);
+  transform: translateY(0.12em);
   transition: opacity 420ms ease, filter 420ms ease, transform 420ms ease;
 }
 .char.is-visible {
@@ -123,15 +192,38 @@ body::before {
   filter: blur(0);
   transform: none;
 }
+/* Safety net: once typing finishes, letters stay put regardless. */
+.is-done .char { opacity: 1; filter: none; transform: none; }
+
+/* --- Caret ----------------------------------------------------------- */
+.caret {
+  display: inline-block;
+  width: 0.05em;
+  height: 0.78em;
+  vertical-align: baseline;
+  background: var(--fg);
+
+  /* The caret is walked through the letters as they appear, so it must
+     cost nothing in the line box — the negative right margin cancels
+     its own width and gap. Without this, every hop would nudge the
+     centred name sideways. */
+  margin-left: 0.06em;
+  margin-right: -0.11em;
+}
+.is-done .caret {
+  animation: blink 1.5s steps(1, end) infinite;
+}
+
+@keyframes blink {
+  0%, 50%      { opacity: 1; }
+  50.01%, 100% { opacity: 0; }
+}
 
 /* --- North star ------------------------------------------------------ */
 .star {
-  /* Inherits main's 40rem ceiling — wide enough for the whole thought
-     on one line at desktop size, folding to two on a phone. */
   max-width: 100%;
-  margin: clamp(1.5rem, 3.6vw, 2.25rem) auto 0;
-  text-align: center;
-  color: var(--ink-soft);
+  margin: clamp(1.75rem, 4.5vw, 2.75rem) auto 0;
+  color: var(--muted);
 }
 
 /* The eyebrow. Small and widely tracked so it reads as a caption
@@ -140,21 +232,22 @@ body::before {
   display: block;
   font-size: 0.6875rem;
   text-transform: uppercase;
-  letter-spacing: 0.22em;
-  text-indent: 0.22em;      /* re-centres against the trailing track */
-  opacity: 0.62;
-  margin-bottom: 0.7rem;
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;      /* re-centres against the trailing track */
+  opacity: 0.6;
+  margin-bottom: 0.85rem;
 }
 
-/* Caps need looser tracking than lowercase to stay legible. */
 .star-text {
   display: block;
-  font-size: clamp(0.8125rem, 2.1vw, 0.9375rem);
+  font-size: clamp(0.75rem, 1.9vw, 0.875rem);
   text-transform: uppercase;
-  letter-spacing: 0.11em;
-  text-indent: 0.11em;
-  line-height: 1.85;
-  text-wrap: balance;   /* keeps the two lines evenly weighted */
+  letter-spacing: 0.13em;
+  text-indent: 0.13em;
+  line-height: 2;
+  color: var(--fg);
+  opacity: 0.78;
+  text-wrap: balance;   /* keeps the lines evenly weighted */
 }
 
 /* The parenthetical must never be split across a line break — an
@@ -163,129 +256,79 @@ body::before {
 
 /* Hidden only when scripted — see the .js flag set in <head>. Without
    JavaScript the line is simply there, no animation, no blank space. */
-.js .star {
+.js .star,
+.js .contact {
   opacity: 0;
-  transform: translateY(0.5rem);
   transition: opacity 900ms ease, transform 900ms cubic-bezier(0.2, 0.7, 0.2, 1);
 }
-.js .star.is-in {
+.js .star { transform: translateY(0.5rem); }
+.js .star.is-in,
+.js .contact.is-in {
   opacity: 1;
   transform: none;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .js .star { transition: none; opacity: 1; transform: none; }
-}
-
-/* --- Email ----------------------------------------------------------- */
+/* --- Footer ---------------------------------------------------------- */
 .contact {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 0.85rem;
-  font-size: 0.875rem;
-  letter-spacing: 0.012em;
-  color: var(--ink-soft);
+  gap: 1rem;
+  padding: clamp(1.25rem, 3vw, 1.75rem) var(--gutter);
+  border-top: 1px solid var(--rule);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.contact a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 260ms ease, opacity 260ms ease;
+}
+.contact a:hover { color: var(--fg); }
+.contact a:focus-visible {
+  outline: 1px solid var(--fg);
+  outline-offset: 4px;
 }
 
 /* The icon is optically heavier than the text beside it, so it sits a
    little lighter until hovered. */
 .contact .icon {
   display: inline-flex;
-  padding-bottom: 0;
-  border-bottom: 0;
-  opacity: 0.78;
-  transition: color 300ms ease, opacity 300ms ease;
+  margin-inline-start: auto;   /* pins it to the far edge of the sheet */
+  opacity: 0.7;
 }
-.contact .icon:hover {
-  opacity: 1;
-  border-bottom: 0;
-}
-
-.contact a {
-  color: inherit;
-  text-decoration: none;
-  padding-bottom: 0.15em;
-  border-bottom: 1px solid transparent;
-  transition: color 300ms ease, border-color 300ms ease;
-}
-.contact a:hover {
-  color: var(--ink);
-  border-bottom-color: var(--caret);
-}
-.contact a:focus-visible {
-  outline: 2px solid var(--caret);
-  outline-offset: 4px;
-  border-radius: 2px;
-}
-
-.js .contact {
-  opacity: 0;
-  transition: opacity 900ms ease;
-}
-.js .contact.is-in { opacity: 1; }
-
-@media (prefers-reduced-motion: reduce) {
-  .js .contact { transition: none; opacity: 1; }
-}
-
-/* --- Caret ----------------------------------------------------------- */
-.caret {
-  display: inline-block;
-  width: 0.055em;
-  height: 0.82em;
-  vertical-align: baseline;
-  background: var(--caret);
-
-  /* The caret is walked through the letters as they appear, so it must
-     cost nothing in the line box — the negative right margin cancels
-     its own width and gap. Without this, every hop would nudge the
-     centred name sideways. */
-  margin-left: 0.06em;
-  margin-right: -0.115em;
-  /* Solid while typing; a slow pulse once the name has landed. */
-}
-.is-done .caret {
-  animation: blink 1.5s steps(1, end) infinite;
-}
-
-@keyframes blink {
-  0%, 50%   { opacity: 1; }
-  50.01%, 100% { opacity: 0; }
-}
-
-/* Safety net: once typing finishes, letters stay put regardless. */
-.is-done .char { opacity: 1; filter: none; transform: none; }
+.contact .icon:hover { opacity: 1; }
 
 @media (prefers-reduced-motion: reduce) {
   .char { transition: none; opacity: 1; filter: none; transform: none; }
   .caret, .is-done .caret { animation: none; }
+  .js .star, .js .contact { transition: none; opacity: 1; transform: none; }
 }
 
 /* --- 404 ------------------------------------------------------------- */
-.notice {
-  max-width: 24rem;
-  text-align: center;
-  font-size: 1.0625rem;
-  line-height: 1.6;
-}
+.notice { max-width: 28rem; }
 .notice h1 {
-  font-size: clamp(1.75rem, 6vw, 2.5rem);
+  margin: 0 0 0.75rem;
+  font-family: var(--sans);
+  font-size: clamp(1.5rem, 5vw, 2.25rem);
   font-weight: 400;
-  letter-spacing: -0.015em;
-  margin: 0 0 0.5rem;
+  letter-spacing: -0.02em;
 }
-.notice p { margin: 0; opacity: 0.72; }
-
+.notice p {
+  margin: 0;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.13em;
+  color: var(--muted);
+}
 .notice a {
-  color: inherit;
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-  text-decoration-color: var(--caret);
+  color: var(--fg);
+  text-decoration: none;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 0.15em;
+  transition: border-color 260ms ease;
 }
-.notice a:hover { text-decoration-thickness: 2px; }
-.notice a:focus-visible {
-  outline: 2px solid var(--caret);
-  outline-offset: 3px;
-  border-radius: 2px;
-}
+.notice a:hover { border-bottom-color: var(--fg); }
+.notice a:focus-visible { outline: 1px solid var(--fg); outline-offset: 4px; }

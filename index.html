@@ -25,8 +25,8 @@
        <meta property="og:image" content="https://kushpatel.ai/assets/og-image.png"> -->
 
   <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
-  <meta name="theme-color" content="#f2eee5" media="(prefers-color-scheme: light)">
-  <meta name="theme-color" content="#12100d" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f2f1ed" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#16161b" media="(prefers-color-scheme: dark)">
   <link rel="stylesheet" href="/styles.css">
 
   <!-- Marks the document as scripted before first paint, so the CSS can
@@ -91,7 +91,19 @@
 </head>
 
 <body>
-  <main>
+  <div class="sheet">
+    <!-- Crop marks at the corners of the sheet. Decorative only, and
+         suppressed below 768px where they would sit on the screen edge. -->
+    <span class="tick tick-tl" aria-hidden="true"></span>
+    <span class="tick tick-tr" aria-hidden="true"></span>
+    <span class="tick tick-bl" aria-hidden="true"></span>
+    <span class="tick tick-br" aria-hidden="true"></span>
+
+    <header class="masthead">
+      <span class="domain">kushpatel.ai</span>
+    </header>
+
+    <main class="hero">
     <!-- The name is real text in the HTML, not injected by JavaScript.
          Crawlers and screen readers get it immediately; the animation
          is a progressive enhancement layered on top. With JS disabled
@@ -116,20 +128,21 @@
        rel="me noopener noreferrer" target="_blank"
        aria-label="Kush Patel on LinkedIn">
       <!-- Drawn as strokes rather than the solid brand mark: at this size
-           the filled square reads as a dark blob against the hairline
-           serif. Same silhouette, matched to the page's weight. -->
-      <svg viewBox="0 0 24 24" width="16" height="16" fill="none"
+           the filled square reads as a dark blob. Square corners rather
+           than rounded, to match the zero-radius rule of the layout. -->
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none"
            stroke="currentColor" stroke-width="1.7"
-           stroke-linecap="round" stroke-linejoin="round"
+           stroke-linecap="square" stroke-linejoin="miter"
            aria-hidden="true" focusable="false">
-        <rect x="2.6" y="2.6" width="18.8" height="18.8" rx="3.6"/>
+        <rect x="2.7" y="2.7" width="18.6" height="18.6"/>
         <path d="M7.1 10.7v6.7"/>
         <path d="M11.6 17.4v-6.7"/>
         <path d="M11.6 13.8c0-1.75 1.2-2.95 2.85-2.95s2.85 1.2 2.85 2.95v3.6"/>
         <circle cx="7.1" cy="7.15" r="0.35" fill="currentColor" stroke-width="1.1"/>
       </svg>
     </a>
-  </footer>
+    </footer>
+  </div>
 
   <script>
     (function () {
